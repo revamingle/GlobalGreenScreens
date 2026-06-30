@@ -1,0 +1,8 @@
+{
+  "name": "Global Green Screen",
+  "description": "A student-led global health and environment initiative to track the impact of green screen barriers on air quality.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ]
+}
