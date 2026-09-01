@@ -229,10 +229,10 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
           style={{ height: '100%', width: '100%', background: '#f1f5f9' }}
           zoomControl={false}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-          />
+<TileLayer
+  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+/>
           <MapUpdater center={center} zoom={zoom} />
           
           {filteredPoints.map((point) => {
