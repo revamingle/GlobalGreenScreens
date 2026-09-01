@@ -4,7 +4,6 @@ import L from 'leaflet';
 import { DataPoint } from '../types';
 import { Wind, Leaf, Filter, X, Sparkles } from 'lucide-react';
 
-// No local leaflet.css import needed as it's in index.html
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -20,7 +19,6 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
   const map = useMap();
   useEffect(() => {
     map.setView(center, zoom);
-    // Force multiple resize invalidations to ensure map tiles load correctly
     const timer1 = setTimeout(() => map.invalidateSize(), 100);
     const timer2 = setTimeout(() => map.invalidateSize(), 500);
     const timer3 = setTimeout(() => map.invalidateSize(), 1000);
@@ -34,12 +32,11 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
 }
 
 export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
-  const [center, setCenter] = useState<[number, number]>([47.6062, -122.3321]); // Seattle Default Focus
+  const [center, setCenter] = useState<[number, number]>([47.6062, -122.3321]);
   const [zoom, setZoom] = useState(11);
   const [showFilters, setShowFilters] = useState(false);
   const [activePopup, setActivePopup] = useState<string | null>(null);
   
-  // Custom icons based on reduction percentage - moved inside to ensure L is available
   const icons = useMemo(() => {
     if (!L || !L.divIcon) return null;
     
@@ -65,17 +62,14 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
     };
   }, []);
 
-  // Filter States
   const [barrierFilter, setBarrierFilter] = useState<string>('All');
   const [plantFilter, setPlantFilter] = useState<string>('All');
 
   const filteredPoints = useMemo(() => {
     return dataPoints.filter(p => {
-      // Basic validation: skip points with invalid coordinates
       if (typeof p.latitude !== 'number' || typeof p.longitude !== 'number' || isNaN(p.latitude) || isNaN(p.longitude)) {
         return false;
       }
-      
       const matchBarrier = barrierFilter === 'All' || p.barrierType === barrierFilter;
       const matchPlant = plantFilter === 'All' || p.plantSpecies === plantFilter;
       return matchBarrier && matchPlant;
@@ -88,7 +82,6 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
   useEffect(() => {
     if (filteredPoints.length > 0) {
       const latest = filteredPoints[filteredPoints.length - 1];
-      // Only fly to the latest point if it is a newly submitted user record
       if (!latest.isSample) {
         setCenter([latest.latitude, latest.longitude]);
         setZoom(13);
@@ -112,7 +105,6 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
 
   return (
     <div className="h-full w-full relative flex flex-col bg-slate-100">
-      {/* Header & Legend */}
       {!activePopup && (
         <div className="absolute top-4 left-4 right-4 z-[2000] space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/20">
@@ -156,7 +148,6 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
             </div>
           </div>
 
-          {/* Filter Panel */}
           {showFilters && (
             <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/20 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex justify-between items-center mb-3">
@@ -229,10 +220,10 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
           style={{ height: '100%', width: '100%', background: '#f1f5f9' }}
           zoomControl={false}
         >
-<TileLayer
-  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-/>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+          />
           <MapUpdater center={center} zoom={zoom} />
           
           {filteredPoints.map((point) => {
@@ -331,7 +322,6 @@ export function InteractiveMap({ dataPoints }: InteractiveMapProps) {
                           <span className="font-mono font-bold text-slate-700">{point.pm25PedestrianSide} µg/m³</span>
                         </div>
                         
-                        {/* New Scientific Metadata Display */}
                         {point.windSpeed !== undefined && (
                           <div className="flex items-center justify-between border-b border-slate-50 pb-1">
                             <span className="text-slate-500 font-bold uppercase tracking-tighter">Wind Context</span>
